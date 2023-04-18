@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 extern "C"
 {
@@ -11,21 +13,24 @@ extern "C"
 int main()
 {
 
-    const char* cmd = "a = 7 + 11";
+    std::ifstream filein("script.lua");
+    std::stringstream buffer;
+    buffer << filein.rdbuf(); 
+    filein.close();
 
     // L is a standard lua virtual machine
     lua_State* L = luaL_newstate();
 
     // Tell lua do execute this string
-    int r = luaL_dostring(L, cmd);
+    int r = luaL_dostring(L, buffer.str().c_str());
 
     if (r == LUA_OK)
     {
-        // Try to get value of a
-        lua_getglobal(L, "a");
+        // Try to get value of c
+        lua_getglobal(L, "c");
         if (lua_isnumber(L, -1))
         {
-            std::cout << "a = " << lua_tonumber(L, -1) << std::endl;
+            std::cout << "c = " << lua_tonumber(L, -1) << std::endl;
         }
     }
     else
@@ -36,7 +41,6 @@ int main()
         std::cout << errormsg << std::endl;
     }
 
-    system("pause");
     lua_close(L);
     return 0;
 }
