@@ -1,0 +1,1 @@
+clang++ -l./lib/liblua54 -I./include main.cpp -o app.exe
